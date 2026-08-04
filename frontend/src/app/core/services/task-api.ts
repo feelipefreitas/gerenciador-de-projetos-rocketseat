@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class TaskApi {
-  private readonly apiUrl = environment + '/api/tasks';
+  private readonly apiUrl = environment.urlApiBase + '/api/tasks';
 
   constructor(private http: HttpClient) {}
 

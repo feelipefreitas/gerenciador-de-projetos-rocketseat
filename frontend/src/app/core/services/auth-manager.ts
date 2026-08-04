@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthManager {
-  private readonly apiUrl = environment + '/api/auth';
+  private readonly apiUrl = environment.urlApiBase + '/api/auth';
 
   private currentUser = signal<IUser | null>(null);
   private token = signal<string | null>(null);
