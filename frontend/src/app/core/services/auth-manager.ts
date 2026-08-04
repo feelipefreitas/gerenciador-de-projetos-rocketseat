@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { IUser } from '../models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthManager {
-  private readonly apiUrl = 'http://localhost:3000/api/auth';
+  private readonly apiUrl = environment + '/api/auth';
 
   private currentUser = signal<IUser | null>(null);
   private token = signal<string | null>(null);
@@ -15,18 +16,21 @@ export class AuthManager {
   isAuthenticated = computed(() => !!this.currentUser());
   isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
     this.loadFromStorage();
   }
 
   login(email: string): Observable<{ token: string; user: IUser }> {
     return this.http.post<{ token: string; user: IUser }>(`${this.apiUrl}/login`, { email }).pipe(
-      tap(response => {
+      tap((response) => {
         this.token.set(response.token);
         this.currentUser.set(response.user);
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
-      })
+      }),
     );
   }
 
@@ -43,9 +47,9 @@ export class AuthManager {
   }
 
   fetchCurrentUser(): Observable<IUser> {
-    return this.http.get<IUser>(`${this.apiUrl}/me`).pipe(
-      tap(user => this.currentUser.set(user))
-    );
+    return this.http
+      .get<IUser>(`${this.apiUrl}/me`)
+      .pipe(tap((user) => this.currentUser.set(user)));
   }
 
   private loadFromStorage(): void {
